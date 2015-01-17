@@ -59,15 +59,6 @@ function getVerboseSettings(id, api) {
 }
 
 module.exports = function (options, callback) {
-    var jwt = {
-        scopes: [
-            'https://www.googleapis.com/auth/admin.directory.orgunit',
-            'https://www.googleapis.com/auth/admin.directory.device.chromeos',
-            'https://www.googleapis.com/auth/admin.directory.user',
-            'https://www.googleapis.com/auth/admin.directory.group'
-        ]
-    };
-
     var api = {
         test: false,
         verbose: false,
@@ -75,6 +66,14 @@ module.exports = function (options, callback) {
         insertLog: {},
         verboseSettings: {},
         threads: 1,
+        jwt: {
+            scopes: [
+                'https://www.googleapis.com/auth/admin.directory.orgunit',
+                'https://www.googleapis.com/auth/admin.directory.device.chromeos',
+                'https://www.googleapis.com/auth/admin.directory.user',
+                'https://www.googleapis.com/auth/admin.directory.group'
+            ]
+        },
 
         log: function (id) {
             var messages = [];
@@ -87,12 +86,12 @@ module.exports = function (options, callback) {
         },
 
         getAllGroups: function (callback) {
-            var domain = jwt.delegationEmail.split('@')[1];
+            var domain = api.jwt.delegationEmail.split('@')[1];
             makeRequest({
                 type: 'get',
                 url: 'groups?domain='+domain,
                 callback: callback
-            }, jwt);
+            }, api.jwt);
         },
 
         getGroupMembers: function (groupId, callback) {
@@ -100,7 +99,7 @@ module.exports = function (options, callback) {
                 type: 'get',
                 url: 'groups/'+groupId+'/members',
                 callback: callback
-            }, jwt);
+            }, api.jwt);
         },
 
         setGroupMembers: function (groupId, members, callback) {
@@ -134,7 +133,7 @@ module.exports = function (options, callback) {
                             }
                             callback();
                         }
-                    }, jwt);
+                    }, api.jwt);
                 }
             }
 
@@ -168,7 +167,7 @@ module.exports = function (options, callback) {
                         next();
                     }
                 }
-            }, jwt);
+            }, api.jwt);
         },
 
         setUserRole: function (groupId, userId, role, callback) {
@@ -181,7 +180,7 @@ module.exports = function (options, callback) {
                     body: {
                         role: role.toUpperCase()
                     }
-                }, jwt);
+                }, api.jwt);
             }else{
                 callback();
             }
@@ -234,7 +233,7 @@ module.exports = function (options, callback) {
                                     name: groupName,
                                     description: groupDescription
                                 }
-                            }, jwt);
+                            }, api.jwt);
                         }
                     });
                 } else {
@@ -258,7 +257,7 @@ module.exports = function (options, callback) {
                         body: {
                             'email': userId
                         }
-                    }, jwt);
+                    }, api.jwt);
                 } else {
                     api.setUserRole(groupId, userId, role, callback);
                 }
@@ -275,7 +274,7 @@ module.exports = function (options, callback) {
                         type: 'del',
                         url: 'groups/' + groupId,
                         callback: callback
-                    }, jwt);
+                    }, api.jwt);
                 } else {
                     callback();
                 }
@@ -292,7 +291,7 @@ module.exports = function (options, callback) {
                         type: 'del',
                         url: 'groups/' + groupId + '/members/' + userId,
                         callback: callback
-                    }, jwt);
+                    }, api.jwt);
                 } else {
                     callback();
                 }
@@ -310,7 +309,7 @@ module.exports = function (options, callback) {
                 api[option] = options[option];
             } else {
                 api.log('settingsReport', 'Adding JWT option: ' + option, options[option]);
-                jwt[option] = options[option];
+                api.jwt[option] = options[option];
             }
         }
 
