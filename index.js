@@ -131,6 +131,12 @@ module.exports = function (options, callback) {
                                     }
                                 });
                             }
+
+                            newMembersLookup = null;
+                            queue = null;
+                            groupId = null;
+                            members = null;
+
                             callback();
                         }
                     }, api.jwt);
