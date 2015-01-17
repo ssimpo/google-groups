@@ -15,14 +15,16 @@ function isProperty(obj, key) {
 function getOptions (options, callback) {
     if(isObject(options)){
         callback(options);
+    }else{
+        jsonfile.readFile(options, function(err, options){
+            if(err){
+                console.error(err);
+            }else{
+                callback(options);
+            }
+        });
     }
-    jsonfile.readFile(options, function(err, options){
-        if(err){
-            console.error(err);
-        }else{
-            callback(options);
-        }
-    })
+
 }
 
 function makeRequest(options, jwt) {

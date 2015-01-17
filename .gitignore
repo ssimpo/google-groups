@@ -3,3 +3,5 @@
 node_modules/*
 .directory
 .idea/*
+tests/options.json
+tests/key.pem

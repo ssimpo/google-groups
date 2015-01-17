@@ -17,6 +17,9 @@
     "google-oauth-jwt": "*",
     "jsonfile": "*"
   },
+  "devDependencies": {
+    "jasmine-node": "*"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/ssimpo/google-groups"
