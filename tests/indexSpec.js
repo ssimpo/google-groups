@@ -13,7 +13,7 @@ function isProperty(obj, key) {
 
 describe('Test Api',function(){
 
-  describe("Test api setup", function(done) {
+  describe("Test api setup", function() {
     var testProps = [
       'test'
       , 'verbose'
@@ -56,6 +56,17 @@ describe('Test Api',function(){
       });
     });
 
+  });
+
+  it("Insert group", function(done) {
+    groupsApi('./tests/options.json', function(api){
+
+      api.insertGroup("jasmine-test@"+api.domain, "Jasmine Test Group", "Unit Test Group for Jasmine", function(body){
+        expect(isProperty(body, "error")).toBe(false);
+        done();
+      });
+
+    });
   });
 
 });

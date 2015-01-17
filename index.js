@@ -68,6 +68,7 @@ module.exports = function (options, callback) {
         insertLog: {},
         verboseSettings: {},
         threads: 1,
+        domain: '',
         jwt: {
             scopes: [
                 'https://www.googleapis.com/auth/admin.directory.orgunit',
@@ -320,6 +321,11 @@ module.exports = function (options, callback) {
                 api.jwt[option] = options[option];
             }
         }
+
+        if (isProperty(api.jwt, 'delegationEmail')) {
+            api.domain = api.jwt.delegationEmail.split('@')[1];
+        }
+
 
         callback(api);
     });
