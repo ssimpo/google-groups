@@ -1,0 +1,33 @@
+{
+  "name": "google-groups",
+  "version": "0.0.1",
+  "author": {
+    "name": "Stephen Simpson",
+    "email": "me@simpo.org"
+  },
+  "description": "Module for connecting to the Google API and viewing and managing group information",
+  "keywords": [
+    "google",
+    "api",
+    "google groups",
+    "email",
+    "groups"
+  ],
+  "dependencies": {
+    "google-oauth-jwt": "*",
+    "googleapis": "*",
+    "jsonfile": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ssimpo/google-groups"
+  },
+  "homepage": "https://github.com/ssimpo/google-groups",
+  "bugs": {
+    "url": "https://github.com/ssimpo/google-groups/issues"
+  },
+  "engines": {
+    "node": ">=0.8"
+  },
+  "readmeFilename": "README.md"
+}
