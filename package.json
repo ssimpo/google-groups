@@ -15,7 +15,6 @@
   ],
   "dependencies": {
     "google-oauth-jwt": "*",
-    "googleapis": "*",
     "jsonfile": "*"
   },
   "repository": {

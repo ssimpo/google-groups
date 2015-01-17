@@ -1,4 +1,3 @@
-var google = require('googleapis');
 var request = require('google-oauth-jwt').requestWithJWT();
 var jsonfile = require('jsonfile');
 
