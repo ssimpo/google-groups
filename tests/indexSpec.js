@@ -232,4 +232,36 @@ describe('Test Api',function(){
 
   }, 15*1000);
 
+  it("Set User Role", function(done) {
+    var roles = ["MEMBER", "OWNER", "MANAGER"];
+
+    function testSetRole(api, role, callback){
+      api.setUserRole("jasmine-test@"+api.domain, "jasmine-user1@"+api.domain, role, function(body){
+        expect(isProperty(body, "error")).not.toBeTruthy();
+        api.getMember("jasmine-test@"+api.domain, "jasmine-user1@"+api.domain, function(member){
+          expect(member.role).toEqual(role);
+
+          callback();
+        });
+      });
+    }
+
+    function next(api, role){
+      testSetRole(api, role, function(){
+        if(roles.length <= 0){
+          deleteTestGroups(api, done);
+        }else{
+          next(api, roles.pop());
+        }
+      });
+    }
+
+    groupsApi('./tests/options.json', function(api){
+      createTestMembers(1, api, function(){
+        next(api, roles.pop());
+      });
+    });
+
+  }, 25*1000);
+
 });
