@@ -46,7 +46,7 @@ function deleteTestGroups(api, callback){
 
   api.getAllGroups(function(allgroups){
     allgroups.groups.forEach(function(group){
-      if(/jasmine\-test\d\@/.test(group.email)){
+      if(/jasmine\-test(?:\d+|)\@/.test(group.email)){
         toDelete.push(group.email);
       }
     });
@@ -210,7 +210,7 @@ describe('Test Api',function(){
         api.getGroupMembers("jasmine-test@"+api.domain, function(members){
           expect(allgroups.groups.length).toEqual(3);
 
-          done();
+          deleteTestGroups(api, done);
         });
       });
     });
