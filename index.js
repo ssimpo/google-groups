@@ -105,6 +105,14 @@ module.exports = function (options, callback) {
             }, api.jwt);
         },
 
+        getMember: function(groupId, userId, callback) {
+            makeRequest({
+                type: 'get',
+                url: 'groups/'+groupId+'/members/'+userId,
+                callback: callback
+            }, api.jwt);
+        },
+
         setGroupMembers: function (groupId, members, callback) {
             if(api.test) {
                 api.log('warnings', 'Running in test mode. Change test option in options.json to true to run for real.  This will result in warnings about people not being added to groups as member insertion is only simulated not actually actioned.');

@@ -217,4 +217,19 @@ describe('Test Api',function(){
     });
 
   }, 15*1000);
+
+  it("Get Member", function(done) {
+    groupsApi('./tests/options.json', function(api){
+      createTestMembers(1, api, function(){
+        api.getMember("jasmine-test@"+api.domain, "jasmine-user1@"+api.domain, function(member){
+          expect(isProperty(member, "error")).not.toBeTruthy();
+          expect(member.email).toEqual("jasmine-user1@"+api.domain);
+
+          deleteTestGroups(api, done);
+        });
+      });
+    });
+
+  }, 15*1000);
+
 });
