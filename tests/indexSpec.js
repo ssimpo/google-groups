@@ -50,15 +50,15 @@ function deleteTestGroups(api, callback){
         toDelete.push(group.email);
       }
     });
-  });
 
-  if(toDelete.length > 0){
-    toDelete.forEach(function(email){
-      api.deleteGroup(email, done);
-    });
-  }else{
-    callback();
-  }
+    if(toDelete.length > 0){
+      toDelete.forEach(function(email){
+        api.deleteGroup(email, done);
+      });
+    }else{
+      callback();
+    }
+  });
 }
 
 function createTestMembers(quanity, api, callback){
@@ -76,8 +76,8 @@ function createTestMembers(quanity, api, callback){
   api.insertGroup("jasmine-test@"+api.domain, groupName, groupDescription, function(body){
     for(var n=1; n<=quanity; n++){
       api.insertMember(
-        "jasmine-user"+n+"@"+api.domain,
         "jasmine-test@"+api.domain,
+        "jasmine-user"+n+"@"+api.domain,
         "MEMBER",
         done
       );
@@ -207,8 +207,9 @@ describe('Test Api',function(){
   it("Get Group Members", function(done) {
     groupsApi('./tests/options.json', function(api){
       createTestMembers(3, api, function(){
-        api.getGroupMembers("jasmine-test@"+api.domain, function(members){
-          expect(allgroups.groups.length).toEqual(3);
+        api.getGroupMembers("jasmine-test@"+api.domain, function(allmembers){
+          expect(allmembers.members.length).toEqual(3);
+
 
           deleteTestGroups(api, done);
         });
@@ -216,5 +217,4 @@ describe('Test Api',function(){
     });
 
   }, 15*1000);
-
 });
