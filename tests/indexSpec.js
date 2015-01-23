@@ -61,6 +61,30 @@ function deleteTestGroups(api, callback){
   }
 }
 
+function createTestMembers(quanity, api, callback){
+  var groupName = "Jasmine Test Group";
+  var groupDescription = "Unit Test Group for Jasmine";
+  var count = 0;
+
+  function done(body){
+    count++;
+    if(count >= quanity){
+      callback();
+    }
+  }
+
+  api.insertGroup("jasmine-test@"+api.domain, groupName, groupDescription, function(body){
+    for(var n=1; n<=quanity; n++){
+      api.insertMember(
+        "jasmine-user"+n+"@"+api.domain,
+        "jasmine-test@"+api.domain,
+        "MEMBER",
+        done
+      );
+    }
+  });
+}
+
 describe('Test Api',function(){
 
   describe("Test api setup", function() {
@@ -179,5 +203,18 @@ describe('Test Api',function(){
       });
     });
   });
+
+  it("Get Group Members", function(done) {
+    groupsApi('./tests/options.json', function(api){
+      createTestMembers(3, api, function(){
+        api.getGroupMembers("jasmine-test@"+api.domain, function(members){
+          expect(allgroups.groups.length).toEqual(3);
+
+          done();
+        });
+      });
+    });
+
+  }, 15*1000);
 
 });
