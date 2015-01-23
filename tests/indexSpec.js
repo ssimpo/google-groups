@@ -158,4 +158,26 @@ describe('Test Api',function(){
     });
   }, 15*1000);
 
+  it("Insert Member", function(done) {
+    groupsApi('./tests/options.json', function(api){
+      createTestGroups(1, api, function(){
+        api.insertMember("jasmine-test1@"+api.domain, "jasmine-user@"+api.domain, "MEMBER", function(body){
+          expect(isProperty(body, "error")).not.toBeTruthy();
+
+          done();
+        });
+      });
+    });
+  }, 10*1000);
+
+  it("Delete Member", function(done) {
+    groupsApi('./tests/options.json', function(api){
+      api.deleteMember("jasmine-test1@"+api.domain, "jasmine-user@"+api.domain, function(body){
+        expect(isProperty(body, "error")).not.toBeTruthy();
+
+        done();
+      });
+    });
+  });
+
 });
