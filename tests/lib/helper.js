@@ -1,11 +1,11 @@
 /*global module */
 /*jslint node: true */
 
-"use strict";
+'use strict';
 
 function createTestGroups(quanity, api, callback){
-  var groupName = "Jasmine Test Group";
-  var groupDescription = "Unit Test Group for Jasmine";
+  var groupName = 'Jasmine Test Group';
+  var groupDescription = 'Unit Test Group for Jasmine';
   var count = 0;
 
   function done (body) {
@@ -17,9 +17,9 @@ function createTestGroups(quanity, api, callback){
 
   for (var n=1; n<=quanity; n++) {
     api.insertGroup(
-      "jasmine-test"+n+"@"+api.domain,
-      groupName+": "+n,
-      groupDescription+" ("+n+")",
+      'jasmine-test'+n+'@'+api.domain,
+      groupName+': '+n,
+      groupDescription+' ('+n+')',
       done
     );
   }
@@ -54,8 +54,8 @@ function deleteTestGroups(api, callback){
 };
 
 function createTestMembers (quanity, api, callback){
-  var groupName = "Jasmine Test Group";
-  var groupDescription = "Unit Test Group for Jasmine";
+  var groupName = 'Jasmine Test Group';
+  var groupDescription = 'Unit Test Group for Jasmine';
   var count = 0;
 
   function done(body){
@@ -68,9 +68,9 @@ function createTestMembers (quanity, api, callback){
   createTestGroups(1, api, function(){
     for(var n=1; n<=quanity; n++){
       api.insertMember(
-        "jasmine-test1@"+api.domain,
-        "jasmine-user"+n+"@"+api.domain,
-        "MEMBER",
+        'jasmine-test1@'+api.domain,
+        'jasmine-user'+n+'@'+api.domain,
+        'MEMBER',
         done
       );
     }

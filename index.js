@@ -1,6 +1,6 @@
 /*jslint node: true */
 
-"use strict";
+'use strict';
 
 var request = require('google-oauth-jwt').requestWithJWT();
 var jsonfile = require('jsonfile');

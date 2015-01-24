@@ -1,7 +1,7 @@
 /*global module */
 /*jslint node: true */
 
-"use strict";
+'use strict';
 
 function isObject(value) {
   return ((typeof value === 'object') && (value !== null));
@@ -20,10 +20,10 @@ module.exports = {
 
     this.message = function () {
       if (pass) {
-        return "is an object.";
+        return 'is an object.';
       }
 
-      return "is not an object.";
+      return 'is not an object.';
     };
 
     return pass;
@@ -38,10 +38,10 @@ module.exports = {
 
     this.message = function () {
       if (pass) {
-        return expected + ", is a property of supplied object.";
+        return expected + ', is a property of supplied object.';
       }
 
-      return expected + ", is not a property of supplied object.";
+      return expected + ', is not a property of supplied object.';
     };
 
     return pass;
