@@ -1,4 +1,5 @@
 var groupsApi = require('../index.js');
+var extraMatchers = require('./lib/jasmineMatchers.js');
 
 function isObject(value) {
   return ((typeof value == 'object') && (value !== null))
@@ -85,9 +86,12 @@ function createTestMembers(quanity, api, callback){
   });
 }
 
-describe('Test Api',function(){
+describe('Test Api',function() {
+  beforeEach(function() {
+    this.addMatchers(extraMatchers);
+  });
 
-  describe("Test api setup", function() {
+  describe("Test api setup", function () {
     var testProps = [
       'test'
       , 'verbose'
@@ -104,26 +108,26 @@ describe('Test Api',function(){
       , 'deleteMember'
     ];
 
-    it("Api is created from input object", function(done){
-      groupsApi({}, function(api){
+    it("Api is created from input object", function (done) {
+      groupsApi({}, function (api) {
 
-        expect(isObject(api)).toBeTruthy();
+        expect(api).toBeObject();
 
-        testProps.forEach(function(prop){
-          expect(isProperty(api, prop)).toBeTruthy();
+        testProps.forEach(function (prop) {
+          expect(api).toHaveProperty(prop);
         });
 
         done();
       });
     });
 
-    it("Api is created from input object", function(done){
-      groupsApi('./tests/blank.json', function(api){
+    it("Api is created from input object", function (done) {
+      groupsApi('./tests/blank.json', function (api) {
 
-        expect(isObject(api)).toBeTruthy();
+        expect(api).toBeObject();
 
-        testProps.forEach(function(prop){
-          expect(isProperty(api, prop)).toBeTruthy();
+        testProps.forEach(function (prop) {
+          expect(api).toHaveProperty(prop);
         });
 
         done();
@@ -132,148 +136,152 @@ describe('Test Api',function(){
 
   });
 
-  it("Insert group", function(done) {
-    groupsApi('./tests/options.json', function(api){
-      var groupId = "jasmine-test1@"+api.domain;
-      var groupName = "Jasmine Test Group";
-      var groupDescription = "Unit Test Group for Jasmine";
 
-      api.insertGroup(groupId, groupName, groupDescription, function(body){
-        expect(isProperty(body, "error")).not.toBeTruthy();
-        expect(body.email).toEqual(groupId);
-        expect(body.name).toEqual(groupName);
-        expect(body.description).toEqual(groupDescription);
+  describe("Test Api calls", function () {
+    it("Insert group", function(done) {
+      groupsApi('./tests/options.json', function(api){
+        var groupId = "jasmine-test1@"+api.domain;
+        var groupName = "Jasmine Test Group";
+        var groupDescription = "Unit Test Group for Jasmine";
 
-        done();
+        api.insertGroup(groupId, groupName, groupDescription, function(body){
+          expect(body).not.toHaveProperty("error");
+          expect(body.email).toEqual(groupId);
+          expect(body.name).toEqual(groupName);
+          expect(body.description).toEqual(groupDescription);
+
+          done();
+        });
+
       });
-
     });
-  });
 
-  it("Delete group", function(done) {
-    groupsApi('./tests/options.json', function(api){
+    it("Delete group", function(done) {
+      groupsApi('./tests/options.json', function(api){
 
-      api.deleteGroup("jasmine-test1@"+api.domain, function(body){
-        expect(isProperty(body, "error")).not.toBeTruthy();
+        api.deleteGroup("jasmine-test1@"+api.domain, function(body){
+          expect(body).not.toHaveProperty("error");
 
-        done();
+          done();
+        });
+
       });
-
     });
-  });
 
-  it("Get all groups", function(done) {
-    groupsApi('./tests/options.json', function(api){
-      createTestGroups(3, api, function(){
-        api.getAllGroups(function(allgroups){
-          expect(allgroups.groups.length).toBeGreaterThan(2);
+    it("Get all groups", function(done) {
+      groupsApi('./tests/options.json', function(api){
+        createTestGroups(3, api, function(){
+          api.getAllGroups(function(allgroups){
+            expect(allgroups.groups.length).toBeGreaterThan(2);
 
-          var testGroupCount = 0;
-          allgroups.groups.forEach(function(group){
-            if(/jasmine\-test\d\@/.test(group.email)){
-              testGroupCount++;
-            }
+            var testGroupCount = 0;
+            allgroups.groups.forEach(function(group){
+              if(/jasmine\-test\d\@/.test(group.email)){
+                testGroupCount++;
+              }
+            });
+            expect(testGroupCount).toEqual(3);
+
+            deleteTestGroups(api, done);
           });
-          expect(testGroupCount).toEqual(3);
-
-          deleteTestGroups(api, done);
         });
       });
-    });
-  }, 15*1000);
+    }, 15*1000);
 
-  it("Insert Member", function(done) {
-    groupsApi('./tests/options.json', function(api){
-      createTestGroups(1, api, function(){
-        api.insertMember("jasmine-test1@"+api.domain, "jasmine-user1@"+api.domain, "MEMBER", function(body){
-          expect(isProperty(body, "error")).not.toBeTruthy();
+    it("Insert Member", function(done) {
+      groupsApi('./tests/options.json', function(api){
+        createTestGroups(1, api, function(){
+          api.insertMember("jasmine-test1@"+api.domain, "jasmine-user1@"+api.domain, "MEMBER", function(body){
+            expect(body).not.toHaveProperty("error");
+
+            done();
+          });
+        });
+      });
+    }, 10*1000);
+
+    it("Delete Member", function(done) {
+      groupsApi('./tests/options.json', function(api){
+        api.deleteMember("jasmine-test1@"+api.domain, "jasmine-user1@"+api.domain, function(body){
+          expect(body).not.toHaveProperty("error");
 
           done();
         });
       });
     });
-  }, 10*1000);
 
-  it("Delete Member", function(done) {
-    groupsApi('./tests/options.json', function(api){
-      api.deleteMember("jasmine-test1@"+api.domain, "jasmine-user1@"+api.domain, function(body){
-        expect(isProperty(body, "error")).not.toBeTruthy();
-
-        done();
-      });
-    });
-  });
-
-  it("Get Group Members", function(done) {
-    groupsApi('./tests/options.json', function(api){
-      createTestMembers(3, api, function(){
-        api.getGroupMembers("jasmine-test1@"+api.domain, function(allmembers){
-          expect(allmembers.members.length).toEqual(3);
+    it("Get Group Members", function(done) {
+      groupsApi('./tests/options.json', function(api){
+        createTestMembers(3, api, function(){
+          api.getGroupMembers("jasmine-test1@"+api.domain, function(allmembers){
+            expect(allmembers.members.length).toEqual(3);
 
 
-          deleteTestGroups(api, done);
+            deleteTestGroups(api, done);
+          });
         });
       });
-    });
 
-  }, 15*1000);
+    }, 15*1000);
 
-  it("Get Member", function(done) {
-    groupsApi('./tests/options.json', function(api){
-      createTestMembers(1, api, function(){
-        api.getMember("jasmine-test1@"+api.domain, "jasmine-user1@"+api.domain, function(member){
-          expect(isProperty(member, "error")).not.toBeTruthy();
-          expect(member.email).toEqual("jasmine-user1@"+api.domain);
+    it("Get Member", function(done) {
+      groupsApi('./tests/options.json', function(api){
+        createTestMembers(1, api, function(){
+          api.getMember("jasmine-test1@"+api.domain, "jasmine-user1@"+api.domain, function(member){
+            expect(body).not.toHaveProperty("error");
+            expect(member.email).toEqual("jasmine-user1@"+api.domain);
 
-          deleteTestGroups(api, done);
+            deleteTestGroups(api, done);
+          });
         });
       });
-    });
 
-  }, 15*1000);
+    }, 15*1000);
 
-  it("Set User Role", function(done) {
-    var roles = ["MEMBER", "OWNER", "MANAGER"];
+    it("Set User Role", function(done) {
+      var roles = ["MEMBER", "OWNER", "MANAGER"];
 
-    function testSetRole(api, role, callback){
-      api.setUserRole("jasmine-test1@"+api.domain, "jasmine-user1@"+api.domain, role, function(body){
-        expect(isProperty(body, "error")).not.toBeTruthy();
-        api.getMember("jasmine-test1@"+api.domain, "jasmine-user1@"+api.domain, function(member){
-          expect(member.role).toEqual(role);
+      function testSetRole(api, role, callback){
+        api.setUserRole("jasmine-test1@"+api.domain, "jasmine-user1@"+api.domain, role, function(body){
+          expect(body).not.toHaveProperty("error");
 
-          callback();
+          api.getMember("jasmine-test1@"+api.domain, "jasmine-user1@"+api.domain, function(member){
+            expect(member.role).toEqual(role);
+
+            callback();
+          });
         });
-      });
-    }
+      }
 
-    function next(api, role){
-      testSetRole(api, role, function(){
-        if(roles.length <= 0){
-          deleteTestGroups(api, done);
-        }else{
+      function next(api, role){
+        testSetRole(api, role, function(){
+          if(roles.length <= 0){
+            deleteTestGroups(api, done);
+          }else{
+            next(api, roles.pop());
+          }
+        });
+      }
+
+      groupsApi('./tests/options.json', function(api){
+        createTestMembers(1, api, function(){
           next(api, roles.pop());
-        }
-      });
-    }
-
-    groupsApi('./tests/options.json', function(api){
-      createTestMembers(1, api, function(){
-        next(api, roles.pop());
-      });
-    });
-
-  }, 25*1000);
-
-  it("Get User Role", function(done) {
-    groupsApi('./tests/options.json', function(api){
-      createTestMembers(1, api, function(){
-        api.getUserRole("jasmine-test1@"+api.domain, "jasmine-user1@"+api.domain, function(role){
-          expect(role).toEqual("MEMBER");
-
-          deleteTestGroups(api, done);
         });
       });
-    });
-  }, 15*1000);
 
+    }, 25*1000);
+
+    it("Get User Role", function(done) {
+      groupsApi('./tests/options.json', function(api){
+        createTestMembers(1, api, function(){
+          api.getUserRole("jasmine-test1@"+api.domain, "jasmine-user1@"+api.domain, function(role){
+            expect(role).toEqual("MEMBER");
+
+            deleteTestGroups(api, done);
+          });
+        });
+      });
+    }, 15*1000);
+
+  });
 });
