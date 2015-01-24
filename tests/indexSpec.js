@@ -73,10 +73,10 @@ function createTestMembers(quanity, api, callback){
     }
   }
 
-  api.insertGroup("jasmine-test@"+api.domain, groupName, groupDescription, function(body){
+  createTestGroups(1, api, function(){
     for(var n=1; n<=quanity; n++){
       api.insertMember(
-        "jasmine-test@"+api.domain,
+        "jasmine-test1@"+api.domain,
         "jasmine-user"+n+"@"+api.domain,
         "MEMBER",
         done
@@ -134,7 +134,7 @@ describe('Test Api',function(){
 
   it("Insert group", function(done) {
     groupsApi('./tests/options.json', function(api){
-      var groupId = "jasmine-test@"+api.domain;
+      var groupId = "jasmine-test1@"+api.domain;
       var groupName = "Jasmine Test Group";
       var groupDescription = "Unit Test Group for Jasmine";
 
@@ -153,7 +153,7 @@ describe('Test Api',function(){
   it("Delete group", function(done) {
     groupsApi('./tests/options.json', function(api){
 
-      api.deleteGroup("jasmine-test@"+api.domain, function(body){
+      api.deleteGroup("jasmine-test1@"+api.domain, function(body){
         expect(isProperty(body, "error")).not.toBeTruthy();
 
         done();
@@ -185,7 +185,7 @@ describe('Test Api',function(){
   it("Insert Member", function(done) {
     groupsApi('./tests/options.json', function(api){
       createTestGroups(1, api, function(){
-        api.insertMember("jasmine-test1@"+api.domain, "jasmine-user@"+api.domain, "MEMBER", function(body){
+        api.insertMember("jasmine-test1@"+api.domain, "jasmine-user1@"+api.domain, "MEMBER", function(body){
           expect(isProperty(body, "error")).not.toBeTruthy();
 
           done();
@@ -196,7 +196,7 @@ describe('Test Api',function(){
 
   it("Delete Member", function(done) {
     groupsApi('./tests/options.json', function(api){
-      api.deleteMember("jasmine-test1@"+api.domain, "jasmine-user@"+api.domain, function(body){
+      api.deleteMember("jasmine-test1@"+api.domain, "jasmine-user1@"+api.domain, function(body){
         expect(isProperty(body, "error")).not.toBeTruthy();
 
         done();
@@ -207,7 +207,7 @@ describe('Test Api',function(){
   it("Get Group Members", function(done) {
     groupsApi('./tests/options.json', function(api){
       createTestMembers(3, api, function(){
-        api.getGroupMembers("jasmine-test@"+api.domain, function(allmembers){
+        api.getGroupMembers("jasmine-test1@"+api.domain, function(allmembers){
           expect(allmembers.members.length).toEqual(3);
 
 
@@ -221,7 +221,7 @@ describe('Test Api',function(){
   it("Get Member", function(done) {
     groupsApi('./tests/options.json', function(api){
       createTestMembers(1, api, function(){
-        api.getMember("jasmine-test@"+api.domain, "jasmine-user1@"+api.domain, function(member){
+        api.getMember("jasmine-test1@"+api.domain, "jasmine-user1@"+api.domain, function(member){
           expect(isProperty(member, "error")).not.toBeTruthy();
           expect(member.email).toEqual("jasmine-user1@"+api.domain);
 
@@ -236,9 +236,9 @@ describe('Test Api',function(){
     var roles = ["MEMBER", "OWNER", "MANAGER"];
 
     function testSetRole(api, role, callback){
-      api.setUserRole("jasmine-test@"+api.domain, "jasmine-user1@"+api.domain, role, function(body){
+      api.setUserRole("jasmine-test1@"+api.domain, "jasmine-user1@"+api.domain, role, function(body){
         expect(isProperty(body, "error")).not.toBeTruthy();
-        api.getMember("jasmine-test@"+api.domain, "jasmine-user1@"+api.domain, function(member){
+        api.getMember("jasmine-test1@"+api.domain, "jasmine-user1@"+api.domain, function(member){
           expect(member.role).toEqual(role);
 
           callback();
@@ -267,10 +267,10 @@ describe('Test Api',function(){
   it("Get User Role", function(done) {
     groupsApi('./tests/options.json', function(api){
       createTestMembers(1, api, function(){
-        api.getUserRole("jasmine-test@"+api.domain, "jasmine-user1@"+api.domain, function(role){
+        api.getUserRole("jasmine-test1@"+api.domain, "jasmine-user1@"+api.domain, function(role){
           expect(role).toEqual("MEMBER");
 
-          done();
+          deleteTestGroups(api, done);
         });
       });
     });
