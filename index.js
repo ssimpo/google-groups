@@ -1,27 +1,29 @@
+/*jslint node: true */
+
 "use strict";
 
 var request = require('google-oauth-jwt').requestWithJWT();
 var jsonfile = require('jsonfile');
 
-function isObject(value) {
-    return ((typeof value == 'object') && (value !== null))
+function isObject (value) {
+    return ((typeof value === 'object') && (value !== null));
 }
 
-function isProperty(obj, key) {
-    if(isObject(obj)) {
+function isProperty (obj, key) {
+    if (isObject(obj)) {
         return Object.prototype.hasOwnProperty.call(obj, key);
     }
     return false;
 }
 
 function getOptions (options, callback) {
-    if(isObject(options)){
+    if (isObject(options)) {
         callback(options);
-    }else{
+    } else {
         jsonfile.readFile(options, function(err, options){
-            if(err){
+            if (err) {
                 console.error(err);
-            }else{
+            } else {
                 callback(options);
             }
         });
@@ -29,22 +31,23 @@ function getOptions (options, callback) {
 
 }
 
-function makeRequest(options, jwt) {
-    options.type = ((isProperty(options, 'type')) ? options.type : 'get');
+function makeRequest (options, jwt) {options.type = ((isProperty(options, 'type')) ? options.type : 'get');
     options.url = 'https://www.googleapis.com/admin/directory/v1/' + options.url;
 
     var requestObj = {
-        'url': options.url,
-        'json': true,
-        'jwt': jwt
+        url: options.url,
+        json: true,
+        jwt: jwt
     };
 
-    if((options.type === 'post')||(options.type === 'put')) {
+    if ((options.type === 'post') || (options.type === 'put')) {
         requestObj.body = ((isProperty(options, 'body')) ? options.body : {});
     }
 
     request[options.type](requestObj, function (err, res, body) {
-        if (err) console.log('Error', err);
+        if (err) {
+            console.log('Error', err);
+        }
         options.callback(body, res);
     });
 }
@@ -52,8 +55,8 @@ function makeRequest(options, jwt) {
 function getVerboseSettings(id, api) {
     var setting = false;
 
-    if(api.verbose) {
-        if(isProperty(api.verboseSettings, id)) {
+    if (api.verbose) {
+        if (isProperty(api.verboseSettings, id)) {
             setting = api.verboseSettings[id];
         }
     }

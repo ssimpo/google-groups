@@ -1,3 +1,6 @@
+/*global module */
+/*jslint node: true */
+
 "use strict";
 
 function createTestGroups(quanity, api, callback){
@@ -5,14 +8,14 @@ function createTestGroups(quanity, api, callback){
   var groupDescription = "Unit Test Group for Jasmine";
   var count = 0;
 
-  function done(body){
+  function done (body) {
     count++;
-    if(count >= quanity){
+    if (count >= quanity) {
       callback();
     }
   }
 
-  for(var n=1; n<=quanity; n++){
+  for (var n=1; n<=quanity; n++) {
     api.insertGroup(
       "jasmine-test"+n+"@"+api.domain,
       groupName+": "+n,
@@ -74,8 +77,13 @@ function createTestMembers (quanity, api, callback){
   });
 };
 
+function itTimeout (seconds) {
+  return 1000*seconds;
+}
+
 module.exports = {
   createTestGroups: createTestGroups,
   deleteTestGroups: deleteTestGroups,
-  createTestMembers: createTestMembers
+  createTestMembers: createTestMembers,
+  itTimeout: itTimeout
 };
