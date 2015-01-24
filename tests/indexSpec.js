@@ -1,90 +1,6 @@
 var groupsApi = require('../index.js');
 var extraMatchers = require('./lib/jasmineMatchers.js');
-
-function isObject(value) {
-  return ((typeof value == 'object') && (value !== null))
-}
-
-function isProperty(obj, key) {
-  if(isObject(obj)) {
-    return Object.prototype.hasOwnProperty.call(obj, key);
-  }
-  return false;
-}
-
-function createTestGroups(quanity, api, callback){
-  var groupName = "Jasmine Test Group";
-  var groupDescription = "Unit Test Group for Jasmine";
-  var count = 0;
-
-  function done(body){
-    count++;
-    if(count >= quanity){
-      callback();
-    }
-  }
-
-  for(var n=1; n<=quanity; n++){
-    api.insertGroup(
-      "jasmine-test"+n+"@"+api.domain,
-      groupName+": "+n,
-      groupDescription+" ("+n+")",
-      done
-    );
-  }
-}
-
-function deleteTestGroups(api, callback){
-  var toDelete = [];
-  var count = 0;
-
-  function done(body){
-    count++;
-    if(count >= toDelete.length){
-      callback();
-    }
-  }
-
-  api.getAllGroups(function(allgroups){
-    allgroups.groups.forEach(function(group){
-      if(/jasmine\-test(?:\d+|)\@/.test(group.email)){
-        toDelete.push(group.email);
-      }
-    });
-
-    if(toDelete.length > 0){
-      toDelete.forEach(function(email){
-        api.deleteGroup(email, done);
-      });
-    }else{
-      callback();
-    }
-  });
-}
-
-function createTestMembers(quanity, api, callback){
-  var groupName = "Jasmine Test Group";
-  var groupDescription = "Unit Test Group for Jasmine";
-  var count = 0;
-
-  function done(body){
-    count++;
-    if(count >= quanity){
-      callback();
-    }
-  }
-
-  createTestGroups(1, api, function(){
-    for(var n=1; n<=quanity; n++){
-      api.insertMember(
-        "jasmine-test1@"+api.domain,
-        "jasmine-user"+n+"@"+api.domain,
-        "MEMBER",
-        done
-      );
-    }
-  });
-}
+var helper = require('./lib/helper.js');
 
 describe('Test Api',function() {
   beforeEach(function() {
@@ -170,7 +86,7 @@ describe('Test Api',function() {
 
     it("Get all groups", function(done) {
       groupsApi('./tests/options.json', function(api){
-        createTestGroups(3, api, function(){
+        helper.createTestGroups(3, api, function(){
           api.getAllGroups(function(allgroups){
             expect(allgroups.groups.length).toBeGreaterThan(2);
 
@@ -182,7 +98,7 @@ describe('Test Api',function() {
             });
             expect(testGroupCount).toEqual(3);
 
-            deleteTestGroups(api, done);
+            helper.deleteTestGroups(api, done);
           });
         });
       });
@@ -190,7 +106,7 @@ describe('Test Api',function() {
 
     it("Insert Member", function(done) {
       groupsApi('./tests/options.json', function(api){
-        createTestGroups(1, api, function(){
+        helper.createTestGroups(1, api, function(){
           api.insertMember("jasmine-test1@"+api.domain, "jasmine-user1@"+api.domain, "MEMBER", function(body){
             expect(body).not.toHaveProperty("error");
 
@@ -212,12 +128,12 @@ describe('Test Api',function() {
 
     it("Get Group Members", function(done) {
       groupsApi('./tests/options.json', function(api){
-        createTestMembers(3, api, function(){
+        helper.createTestMembers(3, api, function(){
           api.getGroupMembers("jasmine-test1@"+api.domain, function(allmembers){
             expect(allmembers.members.length).toEqual(3);
 
 
-            deleteTestGroups(api, done);
+            helper.deleteTestGroups(api, done);
           });
         });
       });
@@ -226,12 +142,12 @@ describe('Test Api',function() {
 
     it("Get Member", function(done) {
       groupsApi('./tests/options.json', function(api){
-        createTestMembers(1, api, function(){
+        helper.createTestMembers(1, api, function(){
           api.getMember("jasmine-test1@"+api.domain, "jasmine-user1@"+api.domain, function(member){
             expect(body).not.toHaveProperty("error");
             expect(member.email).toEqual("jasmine-user1@"+api.domain);
 
-            deleteTestGroups(api, done);
+            helper.deleteTestGroups(api, done);
           });
         });
       });
@@ -256,7 +172,7 @@ describe('Test Api',function() {
       function next(api, role){
         testSetRole(api, role, function(){
           if(roles.length <= 0){
-            deleteTestGroups(api, done);
+            helper.deleteTestGroups(api, done);
           }else{
             next(api, roles.pop());
           }
@@ -264,7 +180,7 @@ describe('Test Api',function() {
       }
 
       groupsApi('./tests/options.json', function(api){
-        createTestMembers(1, api, function(){
+        helper.createTestMembers(1, api, function(){
           next(api, roles.pop());
         });
       });
@@ -273,11 +189,11 @@ describe('Test Api',function() {
 
     it("Get User Role", function(done) {
       groupsApi('./tests/options.json', function(api){
-        createTestMembers(1, api, function(){
+        helper.createTestMembers(1, api, function(){
           api.getUserRole("jasmine-test1@"+api.domain, "jasmine-user1@"+api.domain, function(role){
             expect(role).toEqual("MEMBER");
 
-            deleteTestGroups(api, done);
+            helper.deleteTestGroups(api, done);
           });
         });
       });
