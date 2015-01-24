@@ -203,6 +203,12 @@ module.exports = function (options, callback) {
             }
         },
 
+        getUserRole: function (groupId, userId, callback) {
+            api.getMember(groupId, userId, function(member) {
+                callback(member.role);
+            });
+        },
+
         insertDeleteErrorCheck: function (inserting, groupId, userId) {
             userId = ((userId === undefined) ? '' : userId);
 

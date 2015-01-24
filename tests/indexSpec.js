@@ -264,4 +264,16 @@ describe('Test Api',function(){
 
   }, 25*1000);
 
+  it("Get User Role", function(done) {
+    groupsApi('./tests/options.json', function(api){
+      createTestMembers(1, api, function(){
+        api.getUserRole("jasmine-test@"+api.domain, "jasmine-user1@"+api.domain, function(role){
+          expect(role).toEqual("MEMBER");
+
+          done();
+        });
+      });
+    });
+  }, 15*1000);
+
 });
