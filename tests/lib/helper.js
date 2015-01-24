@@ -1,3 +1,5 @@
+"use strict";
+
 function createTestGroups(quanity, api, callback){
   var groupName = "Jasmine Test Group";
   var groupDescription = "Unit Test Group for Jasmine";

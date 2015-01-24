@@ -1,3 +1,5 @@
+"use strict";
+
 var request = require('google-oauth-jwt').requestWithJWT();
 var jsonfile = require('jsonfile');
 
@@ -326,7 +328,7 @@ module.exports = function (options, callback) {
         api['verbose'] = ((isProperty(options, 'verbose'))? options['verbose'] : api['verbose']);
         api['verboseSettings'] = ((isProperty(options, 'verboseSettings'))? options['verboseSettings'] : api['verboseSettings']);
 
-        for(option in options) {
+        for(var option in options) {
             if (isProperty(api, option)) {
                 api.log('settingsReport', 'Adding api option: ' + option, options[option]);
                 api[option] = options[option];

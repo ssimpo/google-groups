@@ -1,3 +1,5 @@
+"use strict";
+
 var groupsApi = require('../index.js');
 var extraMatchers = require('./lib/jasmineMatchers.js');
 var helper = require('./lib/helper.js');
